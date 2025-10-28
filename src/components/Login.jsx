@@ -29,7 +29,6 @@ export default function Login() {
       email.current.value,
       password.current.value
     );
-    // ensure we always store a string for rendering
     const validationMessage =
       typeof validationError === "string"
         ? validationError
@@ -38,7 +37,6 @@ export default function Login() {
     setErrorMessage(validationMessage);
 
     if (validationMessage) return;
-    // Proceed with form submission or further processing
     if (!isSignInForm) {
       createUserWithEmailAndPassword(
         auth,
@@ -64,14 +62,11 @@ export default function Login() {
                   photoURL: photoURL,
                 })
               );
-              navigate("/browse");
             })
             .catch((error) => {
               // convert to string before rendering
               setErrorMessage(error?.message || String(error));
             });
-
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -79,9 +74,7 @@ export default function Login() {
           setErrorMessage(errorCode + ": " + errorMsg);
           // ..
         });
-      // console.log("Sign Up Successful");
     } else {
-      // console.log("Sign In Successful");
       signInWithEmailAndPassword(
         auth,
         email.current.value,
@@ -90,8 +83,6 @@ export default function Login() {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          navigate("/browse");
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;

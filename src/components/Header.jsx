@@ -1,13 +1,16 @@
-import { signOut } from "firebase/auth";
-import React, { useState } from "react";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import React, { useState, useEffect } from "react";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
+import { LOGO, USER_ICON } from "../utils/constant";
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
 
   const handleSignOut = () => {
@@ -24,9 +27,32 @@ export default function Header() {
       .finally(() => setIsSigningOut(false));
   };
 
+  useEffect(() => {
+    const unsubcribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          })
+        );
+        navigate("/browse");
+        // ...
+      } else {
+        // signout
+        dispatch(removeUser());
+        navigate("/");
+      }
+    });
+    //Unsbucribe when component unmount.
+    return () => unsubcribe();
+  }, []);
   return (
     <div className="absolute top-0 left-0 w-full px-8 py-2 bg-gradient-to-b from-black z-20 flex items-center">
-      <img src="/Logonetflix.png" alt="logo" className="h-[40px] w-[140px]" />
+      <img src={LOGO} alt="logo" className="h-[40px] w-[140px]" />
 
       {/* right side user avatar + dropdown */}
       {user && (
@@ -38,11 +64,7 @@ export default function Header() {
             className="flex items-center gap-2 text-white focus:outline-none"
           >
             <img
-              src={
-                !user.photoURL
-                  ? "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
-                  : user.photoURL
-              }
+              src={!user.photoURL ? USER_ICON : user.photoURL}
               alt="user"
               className="h-9 w-9 rounded-sm object-cover border border-gray-700"
             />
