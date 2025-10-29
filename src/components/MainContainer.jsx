@@ -12,7 +12,7 @@ export default function MainContainer() {
   const { title, overview, id } = bannerMovie;
   // console.log(bannerMovie);
   return (
-    <div>
+    <div className="bg-black">
       <VideoTitle title={title} description={overview} />
       <VideoBackground movieId={id} />
     </div>
