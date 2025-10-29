@@ -6,12 +6,12 @@ const useNowPlayingMovies = () => {
   const dispatch = useDispatch();
   const getNowPlayingMoview = async () => {
     const data = await fetch(
-      "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+      "https://api.themoviedb.org/3/movie/now_playing?page=1",
       API_OPTIONS
     );
-    const movieList = await data.json();
-    dispatch(addNowPlayingMovies(movieList));
-    console.log(movieList);
+    const json = await data.json();
+    dispatch(addNowPlayingMovies(json));
+    // console.log(movieList);
   };
   useEffect(() => {
     getNowPlayingMoview();
