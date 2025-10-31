@@ -10,3 +10,6 @@ export const API_OPTIONS = {
   },
 };
 export const IMG_CDN = "https://image.tmdb.org/t/p/w500/";
+export const OPENAI_KEY = import.meta.env.VITE_OPENAI_KEY;
+export const OPENAI_KEY2 = import.meta.env.VITE_OPENAI_KEY2;
+export const DEEP_SEEK = import.meta.env.VITE_DEEP_SEEK;

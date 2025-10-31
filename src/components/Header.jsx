@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { LOGO, USER_ICON } from "../utils/constant";
+import { toggleGptSearchView } from "../utils/gptSlice";
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
 
   const handleSignOut = () => {
     if (isSigningOut) return;
@@ -50,6 +52,10 @@ export default function Header() {
     //Unsbucribe when component unmount.
     return () => unsubcribe();
   }, []);
+
+  const handleGptclick = () => {
+    dispatch(toggleGptSearchView());
+  };
   return (
     <div className="absolute top-0 left-0 w-full px-8 py-2 bg-gradient-to-b from-black z-20 flex items-center">
       <img src={LOGO} alt="logo" className="h-[40px] w-[140px]" />
@@ -57,30 +63,43 @@ export default function Header() {
       {/* right side user avatar + dropdown */}
       {user && (
         <div className="ml-auto relative">
-          <button
-            onClick={() => setIsDropdownOpen((s) => !s)}
-            aria-haspopup="true"
-            aria-expanded={isDropdownOpen}
-            className="flex items-center gap-2 text-white focus:outline-none"
-          >
-            <img
-              src={!user.photoURL ? USER_ICON : user.photoURL}
-              alt="user"
-              className="h-9 w-9 rounded-sm object-cover border border-gray-700"
-            />
-            <svg
-              className="w-4 h-4 text-white"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+          <div className="flex">
+            <button
+              aria-label="AI Search"
+              className={
+                !showGptSearch
+                  ? "mx-4 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-md hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400"
+                  : "mx-4 px-3 py-1.5 rounded-md text-sm font-medium shadow-md transform hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 text-black hover:bg-gray-100 focus:ring-gray-300 bg-red-600 text-white hover:bg-red-700 focus:ring-red-400"
+              }
+              onClick={handleGptclick}
             >
-              <path
-                fillRule="evenodd"
-                d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z"
-                clipRule="evenodd"
+              {showGptSearch ? "Home Page" : "AI Search"}
+            </button>
+            <button
+              onClick={() => setIsDropdownOpen((s) => !s)}
+              aria-haspopup="true"
+              aria-expanded={isDropdownOpen}
+              className="flex items-center gap-2 text-white focus:outline-none"
+            >
+              <img
+                src={!user.photoURL ? USER_ICON : user.photoURL}
+                alt="user"
+                className="h-9 w-9 rounded-sm object-cover border border-gray-700"
               />
-            </svg>
-          </button>
+              <svg
+                className="w-4 h-4 text-white"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
 
           <div
             role="menu"
